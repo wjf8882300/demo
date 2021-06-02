@@ -215,8 +215,6 @@ public class GoogleTranslateUtil {
         if (StringUtils.isBlank(resp)) {
             throw new RuntimeException("网络异常");
         }
-
-        log.info("翻译后:{}", resp);
         try {
             JSONArray jsonObject = JSONArray.parseArray(resp);
             for (Iterator<Object> it = jsonObject.getJSONArray(0).iterator(); it.hasNext(); ) {
