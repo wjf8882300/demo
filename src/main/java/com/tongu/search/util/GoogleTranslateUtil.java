@@ -232,7 +232,7 @@ public class GoogleTranslateUtil {
     }
 
     public String translateTextSdk(String text, String sourceLang, String targetLang){
-        Translate translate = TranslateOptions.getDefaultInstance().getService();
+        Translate translate = TranslateOptions.newBuilder().setProjectId("reflecting-poet-310106").build().getService();
         Translation translation =
                 translate.translate(
                         text,
