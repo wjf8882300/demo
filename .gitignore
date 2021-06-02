@@ -95,6 +95,4 @@ $RECYCLE.BIN/
 *_copy.htm
 *_copy.html
 *.pdb
-src/main/resources/application.yml
-/src/main/resources/application.yml
 bin/
