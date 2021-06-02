@@ -218,6 +218,7 @@ public class GoogleTranslateUtil {
                 retStr += a.getString(0);
             }
         } catch (Exception e) {
+            log.error("转换失败", e);
             throw new RuntimeException("转换失败");
         }
 
