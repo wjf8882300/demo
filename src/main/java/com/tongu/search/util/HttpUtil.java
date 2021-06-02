@@ -1,8 +1,10 @@
 package com.tongu.search.util;
 
+import com.tongu.search.model.HttpPorxy;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
@@ -156,6 +158,40 @@ public class HttpUtil {
 			List<NameValuePair> params = requestParam.entrySet().stream().map(p->new BasicNameValuePair(p.getKey(), p.getValue().toString())).collect(Collectors.toList());
 			httpPost.setEntity(new UrlEncodedFormEntity(params, Charset.forName(CHARSET_UTF8)));
 			RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(5000).setSocketTimeout(5000).setConnectionRequestTimeout(5000).build();
+			httpPost.setConfig(requestConfig);
+			response = closeableHttpClient.execute(httpPost);
+			return EntityUtils.toString(response.getEntity(), CHARSET_UTF8);
+		} catch (IOException e) {
+			log.error("Post {} 失败!", url, e);
+		} finally {
+			if(response != null) {
+				try {
+					response.close();
+				} catch (Exception e) {
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Post请求
+	 * @param url
+	 * @param requestParam
+	 * @return
+	 */
+	public static String postUrl(String url, Map<String, Object> requestParam, HttpPorxy httpPorxy) {
+		CloseableHttpResponse response = null;
+		try {
+			HttpPost httpPost = new HttpPost(url);
+			List<NameValuePair> params = requestParam.entrySet().stream().map(p->new BasicNameValuePair(p.getKey(), p.getValue().toString())).collect(Collectors.toList());
+			httpPost.setEntity(new UrlEncodedFormEntity(params, Charset.forName(CHARSET_UTF8)));
+			RequestConfig.Builder requestBuilder = RequestConfig.custom();
+			if(httpPorxy != null) {
+				HttpHost proxy = new HttpHost(httpPorxy.getHost(), httpPorxy.getPort(), "http");
+				requestBuilder.setProxy(proxy);
+			}
+			RequestConfig requestConfig = requestBuilder.setConnectTimeout(5000).setSocketTimeout(5000).setConnectionRequestTimeout(5000).build();
 			httpPost.setConfig(requestConfig);
 			response = closeableHttpClient.execute(httpPost);
 			return EntityUtils.toString(response.getEntity(), CHARSET_UTF8);

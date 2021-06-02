@@ -206,7 +206,7 @@ public class GoogleTranslateUtil {
         params.put("dt", "t");
         params.put("q", text);
 
-        String resp = HttpUtil.postUrl(PATH, params);
+        String resp = HttpUtil.postUrl(PATH, params, QueueUtil.get());
         if (StringUtils.isBlank(resp)) {
             throw new RuntimeException("网络异常");
         }
