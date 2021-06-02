@@ -13,7 +13,7 @@ import org.springframework.context.annotation.ComponentScan;
  * @version: v1.0.0
  */
 @EnableCaching
-@SpringBootApplication(exclude= {DataSourceAutoConfiguration.class})
+@SpringBootApplication
 @ComponentScan(basePackages = { "com.tongu.search", "com.alibaba.fastjson.support.spring" })
 public class DemoApplication
 {
