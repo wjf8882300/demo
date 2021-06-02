@@ -194,9 +194,13 @@ public class HttpUtil {
 			RequestConfig requestConfig = requestBuilder.setConnectTimeout(5000).setSocketTimeout(5000).setConnectionRequestTimeout(5000).build();
 			httpPost.setConfig(requestConfig);
 			response = closeableHttpClient.execute(httpPost);
-			return EntityUtils.toString(response.getEntity(), CHARSET_UTF8);
+			String result = EntityUtils.toString(response.getEntity(), CHARSET_UTF8);
+			if(response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+				log.error("HttpProxy:{}, Post {} 失败! 状态码:{}, 内容:{}", httpPorxy, url, response.getStatusLine().getStatusCode(), result);
+			}
+			return result;
 		} catch (Exception e) {
-			log.error("Post {} 失败!", url, e);
+			log.error("HttpProxy:{}, Post {} 失败!", httpPorxy, url, e);
 		} finally {
 			if(response != null) {
 				try {
