@@ -2,6 +2,7 @@ package com.tongu.search;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 
@@ -12,7 +13,7 @@ import org.springframework.context.annotation.ComponentScan;
  * @version: v1.0.0
  */
 @EnableCaching
-@SpringBootApplication
+@SpringBootApplication(exclude= {DataSourceAutoConfiguration.class})
 @ComponentScan(basePackages = { "com.tongu.search", "com.alibaba.fastjson.support.spring" })
 public class DemoApplication
 {
