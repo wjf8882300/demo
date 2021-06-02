@@ -197,6 +197,7 @@ public class HttpUtil {
 			String result = EntityUtils.toString(response.getEntity(), CHARSET_UTF8);
 			if(response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
 				log.error("HttpProxy:{}, Post {} 失败! 状态码:{}, 内容:{}", httpPorxy, url, response.getStatusLine().getStatusCode(), result);
+				return null;
 			}
 			return result;
 		} catch (Exception e) {

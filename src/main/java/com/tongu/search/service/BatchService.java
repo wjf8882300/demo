@@ -48,7 +48,7 @@ public class BatchService {
         if(StringUtils.isBlank(source)) {
             return;
         }
-        String dest = googleTranslateUtil.translateTextSdk(source, "en", "vi");
+        String dest = googleTranslateUtil.translateText(source, "en", "vi");
         if(StringUtils.isBlank(dest)) {
             throw new RuntimeException(MessageFormat.format("翻译失败，返回的翻译文为空！source:{0}", source));
         }
@@ -89,7 +89,15 @@ public class BatchService {
         String querySql = MessageFormat.format("{0} limit {2} offset {1}", sql, String.valueOf(offset), String.valueOf(pageSize));
         List<QueryVO> list = jdbcTemplate.query(querySql, Maps.newHashMap(), new BeanPropertyRowMapper<QueryVO>(QueryVO.class));
         log.info("开始处理: {}", querySql);
-        update(list);
+        int i = 0;
+        while(i++ < 3) {
+            try {
+                update(list);
+                break;
+            }catch (Exception e) {
+                log.error("处理失败，尝试{}次", i);
+            }
+        }
         log.info("结束处理: {}", querySql);
     }
 
