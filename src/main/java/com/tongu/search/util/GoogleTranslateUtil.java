@@ -206,7 +206,7 @@ public class GoogleTranslateUtil {
         params.put("dt", "t");
         params.put("q", text);
 
-        log.info("翻译前:{}", text);
+        //log.info("翻译前:{}", text);
 
         String resp = HttpUtil.postUrl(PATH, params, QueueUtil.get());
         if (StringUtils.isBlank(resp)) {
