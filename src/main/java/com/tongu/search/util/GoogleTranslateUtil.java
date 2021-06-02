@@ -1,6 +1,9 @@
 package com.tongu.search.util;
 
 import com.alibaba.fastjson.JSONArray;
+import com.google.cloud.translate.Translate;
+import com.google.cloud.translate.TranslateOptions;
+import com.google.cloud.translate.Translation;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -226,5 +229,15 @@ public class GoogleTranslateUtil {
         }
 
         return retStr;
+    }
+
+    public String translateTextSdk(String text, String sourceLang, String targetLang){
+        Translate translate = TranslateOptions.getDefaultInstance().getService();
+        Translation translation =
+                translate.translate(
+                        text,
+                        Translate.TranslateOption.sourceLanguage("sourceLang"),
+                        Translate.TranslateOption.targetLanguage("targetLang"));
+        return translation.getTranslatedText();
     }
 }

@@ -48,7 +48,7 @@ public class BatchService {
         if(StringUtils.isBlank(source)) {
             return;
         }
-        String dest = googleTranslateUtil.translateText(source, "en", "vi");
+        String dest = googleTranslateUtil.translateTextSdk(source, "en", "vi");
         if(StringUtils.isBlank(dest)) {
             throw new RuntimeException(MessageFormat.format("翻译失败，返回的翻译文为空！source:{0}", source));
         }
