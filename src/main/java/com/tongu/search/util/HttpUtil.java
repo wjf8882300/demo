@@ -195,7 +195,7 @@ public class HttpUtil {
 			httpPost.setConfig(requestConfig);
 			response = closeableHttpClient.execute(httpPost);
 			return EntityUtils.toString(response.getEntity(), CHARSET_UTF8);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			log.error("Post {} 失败!", url, e);
 		} finally {
 			if(response != null) {

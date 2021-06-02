@@ -206,11 +206,13 @@ public class GoogleTranslateUtil {
         params.put("dt", "t");
         params.put("q", text);
 
+        log.info("翻译前:{}", text);
+
         String resp = HttpUtil.postUrl(PATH, params, QueueUtil.get());
         if (StringUtils.isBlank(resp)) {
             throw new RuntimeException("网络异常");
         }
-        log.info("翻译前:{}", text);
+
         log.info("翻译后:{}", resp);
         try {
             JSONArray jsonObject = JSONArray.parseArray(resp);
