@@ -86,7 +86,7 @@ public class BatchService {
         List<QueryVO> list = jdbcTemplate.query(querySql, Maps.newHashMap(), new BeanPropertyRowMapper<QueryVO>(QueryVO.class));
         log.info("开始处理: {}", querySql);
         int i = 0;
-        while(i++ < 3) {
+        while(i++ < 10) {
             try {
                 update(list);
                 break;
