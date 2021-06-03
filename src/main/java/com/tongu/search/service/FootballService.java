@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+
 /**
  * @author ：wangjf
  * @date ：2021/6/3 13:14
@@ -18,7 +20,8 @@ public class FootballService extends BatchService{
     @Qualifier("footballJdbcTemplate")
     protected NamedParameterJdbcTemplate footballJdbcTemplate;
 
-    public FootballService() {
+    @PostConstruct
+    void init() {
         this.sourceJdbcTemplate = footballJdbcTemplate;
     }
 }
