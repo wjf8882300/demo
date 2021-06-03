@@ -1,6 +1,6 @@
 package com.tongu.search.controller;
 
-import com.tongu.search.service.BatchService;
+import com.tongu.search.service.BasketballService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class BasketballController {
 
     @Autowired
-    BatchService batchService;
+    BasketballService batchService;
 
     @GetMapping("/country")
     public String country() throws Exception {

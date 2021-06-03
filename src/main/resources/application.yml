@@ -73,6 +73,24 @@ spring:
         testOnReturn: false
         poolPreparedStatements: true
         maxOpenPreparedStatements: 20
+      basketball:
+        url: jdbc:log4jdbc:postgresql://10.148.0.19:5432/udata-basketball
+        username: developer_readonly
+        password: VhTo2E6QpUWvdF51
+        driver-class-name: net.sf.log4jdbc.DriverSpy
+        filters: stat
+        maxActive: 100
+        initialSize: 1
+        maxWait: 60000
+        minIdle: 1
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: select 'x'
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        maxOpenPreparedStatements: 20
       locale:
         url: jdbc:log4jdbc:postgresql://10.148.0.20:5432/udata-locale
         username: developer

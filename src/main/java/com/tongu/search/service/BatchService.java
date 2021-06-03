@@ -13,18 +13,14 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Service
 public class BatchService {
 
-    @Autowired
-    @Qualifier("sourceJdbcTemplate")
     protected NamedParameterJdbcTemplate sourceJdbcTemplate;
 
     @Autowired
