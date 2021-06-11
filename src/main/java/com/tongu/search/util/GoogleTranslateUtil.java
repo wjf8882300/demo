@@ -1,9 +1,11 @@
 package com.tongu.search.util;
 
 import com.alibaba.fastjson.JSONArray;
+import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.translate.Translate;
 import com.google.cloud.translate.TranslateOptions;
 import com.google.cloud.translate.Translation;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -12,6 +14,9 @@ import org.apache.http.message.BasicNameValuePair;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -229,13 +234,16 @@ public class GoogleTranslateUtil {
         return retStr;
     }
 
-    public String translateTextSdk(String text, String sourceLang, String targetLang){
-        Translate translate = TranslateOptions.newBuilder().setApiKey("AIzaSyCUF3OjkSVnfAD-e7y_W2jISyWQbMNI7Bg").build().getService();
+    public String translateTextSdk(String text, String sourceLang, String targetLang) throws IOException {
+        /*GoogleCredentials credentials = GoogleCredentials.fromStream(new FileInputStream("E:\\study\\server\\googlecloud\\fcscore\\elegant-expanse-310107-ab2a43c3add1.json"))
+                .createScoped(Lists.newArrayList("https://www.googleapis.com/auth/cloud-platform"));
+        Translate translate = TranslateOptions.newBuilder().setCredentials(credentials).build().getService();*/
+        Translate translate = TranslateOptions.getDefaultInstance().getService();
         Translation translation =
                 translate.translate(
                         text,
-                        Translate.TranslateOption.sourceLanguage("sourceLang"),
-                        Translate.TranslateOption.targetLanguage("targetLang"));
+                        Translate.TranslateOption.sourceLanguage(sourceLang),
+                        Translate.TranslateOption.targetLanguage(targetLang));
         return translation.getTranslatedText();
     }
 }
