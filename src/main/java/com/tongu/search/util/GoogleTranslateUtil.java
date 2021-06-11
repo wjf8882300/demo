@@ -234,11 +234,11 @@ public class GoogleTranslateUtil {
         return retStr;
     }
 
+    private static Translate translate = TranslateOptions.getDefaultInstance().getService();
     public String translateTextSdk(String text, String sourceLang, String targetLang) throws IOException {
         /*GoogleCredentials credentials = GoogleCredentials.fromStream(new FileInputStream("E:\\study\\server\\googlecloud\\fcscore\\elegant-expanse-310107-ab2a43c3add1.json"))
                 .createScoped(Lists.newArrayList("https://www.googleapis.com/auth/cloud-platform"));
         Translate translate = TranslateOptions.newBuilder().setCredentials(credentials).build().getService();*/
-        Translate translate = TranslateOptions.getDefaultInstance().getService();
         Translation translation =
                 translate.translate(
                         text,
