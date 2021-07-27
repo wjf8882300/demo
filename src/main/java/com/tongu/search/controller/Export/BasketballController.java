@@ -60,4 +60,16 @@ public class BasketballController {
         batchService.export("select id, zh_name sourceValue from bt_t_event where zh_name is not null order by id", "bt_t_event", "name");
         return "success";
     }
+
+    @GetMapping("/honor")
+    public String honor() throws Exception {
+        batchService.export("select id, name_zh sourceValue from bt_t_honor where name_zh is not null order by id", "bt_t_honor", "name");
+        return "success";
+    }
+
+    @GetMapping("/stage")
+    public String stage() throws Exception {
+        batchService.export("select id, name_zh sourceValue from bt_t_basketball_stage where name_zh is not null order by id", "bt_t_basketball_stage", "name");
+        return "success";
+    }
 }

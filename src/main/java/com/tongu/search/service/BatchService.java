@@ -91,7 +91,7 @@ public class BatchService {
             List<Long> ids = list.stream().map(QueryVO::getId).collect(Collectors.toList());
             Map<String,Object> paramMap = Maps.newHashMap();
             paramMap.put("ids", ids);
-            String querySql = MessageFormat.format("select id, {1} destValue from {0}", tableName, columnName);
+            String querySql = MessageFormat.format("select id, {1} destValue from {0} where id in (:ids)", tableName, columnName);
             List<QueryVO> localList = localeJdbcTemplate.query(querySql, paramMap, new BeanPropertyRowMapper<QueryVO>(QueryVO.class));
             // 合并本地库和标准库数据
             list.forEach(s->{
