@@ -15,7 +15,7 @@ import javax.sql.DataSource;
 public class DataSourceConfig {
 
     @Bean(name = "footballDataSource")
-    @ConfigurationProperties(prefix = "spring.datasource.druid.basketball")
+    @ConfigurationProperties(prefix = "spring.datasource.druid.football")
     public DataSource footballDataSource() {
         return DruidDataSourceBuilder.create().build();
     }
