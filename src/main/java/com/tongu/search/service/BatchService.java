@@ -7,6 +7,7 @@ import com.google.common.collect.Maps;
 import com.tongu.search.model.QueryVO;
 import com.tongu.search.util.ExcelUtil;
 import com.tongu.search.util.GoogleTranslateUtil;
+import com.tongu.search.util.PageUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,6 +123,30 @@ public class BatchService {
         ExcelUtil.createReport(excelEntity);
 
         log.info("结束生成文件: {}", tableName + ".xlsx");
+    }
+
+    public void importExcel(String tableName, String columnName) {
+        log.info("开始读取文件: {}", tableName + ".xlsx");
+        ExcelUtil.ExcelEntity excelEntity = new ExcelUtil.ExcelEntity();
+        excelEntity.setFileFolder("/data/");
+        excelEntity.setFileName(tableName + ".xlsx");
+        excelEntity.setSheetName("sheet1");
+        ExcelUtil.read(excelEntity);
+        log.info("结束读取文件: {}，共获取到{}行数据", tableName + ".xlsx", excelEntity.getContent().size());
+
+        List<QueryVO> contentList = excelEntity.getContent().stream().map(s -> {
+            QueryVO queryVO = new QueryVO();
+            queryVO.setId(Long.valueOf(s.get(0).toString()));
+            queryVO.setDestValue(s.get(2).toString());
+            return queryVO;
+        }).collect(Collectors.toList());
+
+        StringBuilder querySql = new StringBuilder()
+                .append(String.format(" update %s set %s = :destValue where id = :id", tableName, columnName));
+
+        PageUtil.handler(contentList, PAGE_SIZE, list->{
+            batchUpdateBeans(querySql.toString(), list);
+        });
     }
 
     public void execute(String sql, String tableName, String columnName, Consumer<List<QueryVO>> consumer) {

@@ -3,7 +3,6 @@ package com.tongu.search.util;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.ss.usermodel.*;
@@ -45,7 +44,7 @@ public class ExcelUtil {
         /**
          * 表头
          */
-        private List<String> headers = Lists.newArrayList();
+        private List<Object> headers = Lists.newArrayList();
         /**
          * 表内容
          */
@@ -74,7 +73,7 @@ public class ExcelUtil {
         Row headRow = sheet.createRow(0);
         for(int i = 0; i < entity.getHeaders().size(); i ++) {
             Cell cell = headRow.createCell(i, CellType.STRING);
-            cell.setCellValue(entity.getHeaders().get(i));
+            cell.setCellValue(entity.getHeaders().get(i).toString());
             cell.setCellStyle(style);
             sheet.setColumnWidth(i, 256*15);
         }
@@ -291,5 +290,58 @@ public class ExcelUtil {
             int lastRowNumber = sheet.getLastRowNum();
             sheet.shiftRows(startRowNumber + 1, lastRowNumber, -1);
         }
+    }
+
+    public static List<Object> readOneRow(Row row) {
+        List<Object> list = Lists.newArrayList();
+        int lastCellNum = row.getLastCellNum();
+        for(int col = 0; col < lastCellNum; col++) {
+            CellType cellTypeEnum = row.getCell(col).getCellTypeEnum();
+            if(cellTypeEnum.equals(CellType.NUMERIC)) {
+                list.add(String.valueOf(row.getCell(col).getNumericCellValue()));
+            } else{
+                list.add(row.getCell(col).getStringCellValue());
+            }
+        }
+        return list;
+    }
+
+    /**
+     * 读取excel
+     * @param excelEntity
+     */
+    public static void read(ExcelEntity excelEntity) {
+        FileInputStream fileInputStream = null;
+        try {
+            //fileInputStream = new ClassPathResource(MessageFormat.format(excelEntity.getFileFolder(), excelEntity.getContent())).getInputStream();
+            String path = Paths.get(excelEntity.getFileFolder(), excelEntity.getFileName()).toString();
+            fileInputStream = new FileInputStream(path);
+            InputStream inputStream = FileMagic.prepareToCheckMagic(fileInputStream);
+            Workbook workBook = null;
+            if(FileMagic.valueOf(inputStream).equals(FileMagic.OLE2)) {
+                workBook = new HSSFWorkbook(inputStream);
+            } else {
+                workBook = new XSSFWorkbook(inputStream);
+            }
+            Sheet sheet = workBook.getSheet(excelEntity.getSheetName());
+            // 取head
+            Row row = sheet.getRow(0);
+            excelEntity.getHeaders().addAll(readOneRow(row));
+            int lastRowNum = sheet.getLastRowNum();
+            for(int i = 1; i < lastRowNum; i ++) {
+                excelEntity.getContent().add(readOneRow(sheet.getRow(i)));
+            }
+        } catch (Exception e) {
+            log.error("导入出错！{}", e);
+            throw new RuntimeException(e.getMessage());
+        } finally {
+            try {
+                fileInputStream.close();
+            } catch (IOException e) {
+                log.error("导入出错！{}", e);
+                throw new RuntimeException(e.getMessage());
+            }
+        }
+
     }
 }
