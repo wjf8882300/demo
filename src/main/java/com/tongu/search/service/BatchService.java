@@ -134,18 +134,21 @@ public class BatchService {
         ExcelUtil.read(excelEntity);
         log.info("结束读取文件: {}，共获取到{}行数据", tableName + ".xlsx", excelEntity.getContent().size());
 
-        List<QueryVO> contentList = excelEntity.getContent().stream().map(s -> {
-            QueryVO queryVO = new QueryVO();
-            queryVO.setId(Long.valueOf(s.get(0).toString()));
-            queryVO.setDestValue(s.get(2).toString());
-            return queryVO;
-        }).collect(Collectors.toList());
+        List<QueryVO> contentList = excelEntity.getContent().stream()
+                .filter(s->s.size() >=3 && StringUtils.isNoneBlank((String)s.get(0)) && StringUtils.isNoneBlank((String)s.get(2)))
+                .map(s -> {
+                    QueryVO queryVO = new QueryVO();
+                    queryVO.setId(Long.valueOf(s.get(0).toString()));
+                    queryVO.setDestValue(s.get(2).toString());
+                    return queryVO;
+                })
+                .collect(Collectors.toList());
 
-        StringBuilder querySql = new StringBuilder()
-                .append(String.format(" update %s set %s = :destValue where id = :id", tableName, columnName));
+        StringBuilder updateSql = new StringBuilder()
+                .append(String.format("insert into %s(id, %s, create_date, last_update_date) values (:id, :destValue, now(), now()) on conflict(id) do update set %s = :destValue", tableName, columnName, columnName));
 
         PageUtil.handler(contentList, PAGE_SIZE, list->{
-            batchUpdateBeans(querySql.toString(), list);
+            batchUpdateBeans(updateSql.toString(), list);
         });
     }
 
@@ -178,21 +181,35 @@ public class BatchService {
             }catch (Exception e) {
                 log.error("处理失败，尝试{}次", i);
             }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         log.info("结束处理: {}", querySql);
     }
 
     public int batchUpdateBeans(String insertSql, List<? extends Object> beans) {
-        int[] results = null;
-        try {
-            SqlParameterSource[] params = SqlParameterSourceUtils
-                    .createBatch(beans.toArray());
-            results = localeJdbcTemplate.batchUpdate(insertSql,
-                    params);
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error(e.getMessage(), e);
+        int i = 0;
+        while(i++ < 10) {
+            int[] results = null;
+            try {
+                SqlParameterSource[] params = SqlParameterSourceUtils
+                        .createBatch(beans.toArray());
+                results = localeJdbcTemplate.batchUpdate(insertSql,
+                        params);
+                return results.length;
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.error(e.getMessage(), e);
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
-        return results.length;
+        throw new RuntimeException("处理失败");
     }
 }

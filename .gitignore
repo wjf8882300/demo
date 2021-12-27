@@ -96,3 +96,4 @@ $RECYCLE.BIN/
 *_copy.html
 *.pdb
 bin/
+/src/main/resources/application-local.yml

@@ -296,11 +296,17 @@ public class ExcelUtil {
         List<Object> list = Lists.newArrayList();
         int lastCellNum = row.getLastCellNum();
         for(int col = 0; col < lastCellNum; col++) {
-            CellType cellTypeEnum = row.getCell(col).getCellTypeEnum();
+            Cell cell = row.getCell(col);
+            if(cell == null) {
+                continue;
+            }
+            CellType cellTypeEnum = cell.getCellTypeEnum();
             if(cellTypeEnum.equals(CellType.NUMERIC)) {
-                list.add(String.valueOf(row.getCell(col).getNumericCellValue()));
-            } else{
-                list.add(row.getCell(col).getStringCellValue());
+                list.add(String.valueOf(cell.getNumericCellValue()));
+            } else if(cellTypeEnum.equals(CellType.ERROR)){
+                continue;
+            } else {
+                list.add(cell.getStringCellValue());
             }
         }
         return list;
